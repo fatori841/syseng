@@ -1,20 +1,14 @@
-# Use the official Python 3.10 image as the base image
-FROM python:3.10
+# Pull the base Debian image
+FROM debian:latest
 
-# Set the working directory inside the container
-WORKDIR /app
+# Install Nginx
+RUN apt-get update && apt-get install -y nginx
 
-# Copy the requirements file to the working directory
-COPY requirements.txt .
+# Adjust Nginx config to stay in foreground
+RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
-# Install the Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Expose port 80
+EXPOSE 80
 
-# Copy the rest of the application code to the working directory
-COPY . .
-
-# Expose the port on which the Flask app will run
-EXPOSE 5000
-
-# Specify the command to run the application
-CMD [ "python", "app.py" ]
+# Start Nginx
+CMD ["nginx"]
